@@ -1,0 +1,249 @@
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%% HEADER
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%
+%%
+\newcommand{\hyperrefpdfauthor}{}
+\newcommand{\hyperrefpdftitle}{}
+\newcommand{\hyperrefpdfsubject}{}
+\newcommand{\hyperrefpdfkeywords}{}
+\newcommand{\hyperrefpdfborder}{0}
+\documentclass[master]{wissdoc-kw-eng} % possible options: bachelor, master, diploma, phdsubmitted (vorgelegte Dissertation), phdapproved (genehmigte Dissertation)
+% additional logo options: fkie (for Fraunhofer FKIE logo on the left), iop (to use a combiend COMSYS and Internet of Production logo on the right)
+
+\usepackage{pdfpages}
+
+\usepackage{acro}
+\input{acrosettings}
+\input{acronyms}
+
+\usepackage{multibib}
+\newcites{own}{Pre-published Papers}
+
+% % newer acronym packaged dont use bflabel anymore,
+\providecommand\aclabelfont{} % the new command ist aclabelfont however, we also need to be backwards compatible so... we do it like this
+\renewcommand{\aclabelfont}[1]{\normalfont{\normalsize{#1}}\hfill} % keine serifenlose schrift für acronym
+
+% newer acronym packaged dont use bflabel anymore, to not fail the statement below provide the command if not existing
+\providecommand\bflabel{}
+\renewcommand{\bflabel}[1]{\aclabelfont{#1}}
+
+\usepackage{float}
+\floatstyle{ruled}
+\newfloat{listing}{htbp}{lop}[chapter]
+\floatname{listing}{Listing}
+
+%% zur Zitaten des Quelltextes%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% "final" forces printing of all listings, even if the global "draft" is set
+\usepackage[final]{listings}
+\lstset{
+    language=C++,
+    basicstyle=\footnotesize\ttfamily,
+    tabsize=2,
+    numberstyle=\tiny\color{gray},
+    numbersep=5pt,
+    numbers=left,
+    captionpos=b,
+    abovecaptionskip=0pt,
+    belowcaptionskip=0pt,
+    aboveskip=10pt,
+    belowskip=0pt,
+    floatplacement=tbp,
+    frame=topline,
+    framerule=.1pt,
+    framesep = 3pt,
+    mathescape=true,
+    boxpos=t,
+    xleftmargin=1.2em,
+}
+
+\renewcommand\lstlistingname{\textbf{Listing}}
+% This is only kept for backwards compatibility. You should never have to use it. Use the listing-environment instead.
+%\DeclareCaptionFormat*{lstruled}{{\bfseries#1\small\space\normalfont#3\hrule height.1pt depth0pt}\par}
+%\captionsetup[lstlisting]{format=lstruled,singlelinecheck=false}
+
+%% Stil der Beschriftungen %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\usepackage{caption}
+\captionsetup[figure]{font={small,sf}}
+\captionsetup[subfigure]{justification=centering,font={small,sf}}
+\captionsetup[table]{font={small,sf}}
+\captionsetup[listing]{font={small,sf}}
+
+%% Normales LaTeX oder pdfLaTeX? %%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%% ==> Das neue if-Kommando "\ifpdf" wird an einigen wenigen
+%% ==> Stellen benötigt, um die Kompatibilität zwischen
+%% ==> LaTeX und pdfLaTeX herzustellen.
+%\newif\ifpdf
+%\ifx\pdfoutput\undefined
+%    \pdffalse              %%normales LaTeX wird ausgeführt
+%\else
+%    \pdfoutput=1
+%    \pdftrue               %%pdfLaTeX wird ausgeführt
+%\fi
+
+%% Deutsche Anpassungen %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\usepackage[T1]{fontenc}
+\usepackage[utf8]{inputenc}
+
+%% mehrere Abbildungen in eine %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\usepackage{subcaption}
+
+%% Packages für Formeln %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\usepackage{amsmath}
+\usepackage{amsfonts}
+
+\usepackage[inline]{enumitem}
+\setlist[description]{font=\sffamily\bfseries}
+\usepackage[capitalise,nameinlink,noabbrev]{cleveref}
+
+%% Zeilenabstand %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\usepackage{setspace}
+%\singlespacing        %% 1-zeilig (Standard)
+%\onehalfspacing       %% 1,5-zeilig
+%\doublespacing        %% 2-zeilig
+
+%% Andere Packages %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%\usepackage{a4wide} %%Kleinere Seitenränder = mehr Text pro Zeile.
+\usepackage{fancyhdr} %%Fancy Kopf- und Fußzeilen
+%\usepackage{longtable} %%Für Tabellen, die eine Seite überschreiten
+\usepackage{lscape}
+\usepackage{rotating}
+%\usepackage[htt]{hyphenat} %Trennung von Typewriter-Schriften
+%\usepackage{listings}
+\usepackage{tikz}
+\usetikzlibrary{calc}
+\usepackage[en-US]{datetime2} %%Automatisches Ausfüllen der eidesstattlichen Versicherung
+
+% Tabellen mit Center und left
+\usepackage{tabularx,colortbl} % colored table background
+\newcolumntype{C}[1]{>{\centering\arraybackslash}p{#1}}
+\newcolumntype{R}[1]{>{\raggedleft\arraybackslash}p{#1}}
+% Table spacings
+\newcommand\T{\rule{0pt}{2.5ex}\rule[-1.0ex]{0pt}{0pt}}
+\newcommand\B{\rule[-1.0ex]{0pt}{0pt}}
+
+\definecolor{slightgray}{gray}{.90}
+
+
+% Put your own defs to definitions.tex, so you don't need to fiddle around with this file.
+\IfFileExists{definitions.tex}{\input{definitions.tex}}{}
+
+%% zur Benutzung bei ergänzenden Daten%%%%%%%%%%%%%%%%%%%%%%%%
+%\usepackage{endnotes}
+%\renewcommand{\notesname}{Konfigurationsdaten der Messreihen}
+%\renewcommand{\theendnote}{\Alph{endnote}}
+%\renewcommand{\enotesize}{\normalsize}
+
+%\hyphenation{Sensor-netz-werk
+%}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%% DOKUMENT
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+% Use the following for selectively updating only individual
+% chapters. Multiple chapters can be included as a comma-separated
+% list.
+
+% \includeonly{chapters/00_introduction.tex}
+
+\begin{document}
+
+%% Dateiendungen für Grafiken %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%% ==> Sie können hiermit die Dateiendung einer Grafik weglassen.
+%% ==> Aus "\includegraphics{titel.eps}" wird "\includegraphics{titel}".
+%% ==> Wenn Sie nunmehr 2 inhaltsgleiche Grafiken "titel.eps" und
+%% ==> "titel.pdf" erstellen, wird jeweils nur die Grafik eingebunden,
+%% ==> die von ihrem Compiler verarbeitet werden kann.
+%% ==> pdfLaTeX benutzt "titel.pdf". LaTeX benutzt "titel.eps".
+%\ifpdf
+%    \DeclareGraphicsExtensions{.pdf,.jpg,.png}
+%\else
+%    \DeclareGraphicsExtensions{.eps}
+%\fi
+
+\pagestyle{empty} %%Keine Kopf-/Fusszeilen auf den ersten Seiten.
+
+\ifnotdraft{
+%% Deckblatt %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\frontmatter
+\include{chapters/00_title}
+\cleardoublepage
+\ifundergrad
+\include{chapters/00_statement}
+\cleardoublepage
+\fi
+\include{chapters/00_abstract_en}
+\ifphd
+\clearpage % PhD thesis abstracts are commonly about a page...
+\fi
+\ifundergrad
+\vspace {2cm} % ... while undergrad thesis abstracts are commonly about half a page
+\fi
+\include{chapters/00_abstract_de}
+\cleardoublepage
+\ifphdapproved
+\include{chapters/00_acknowledgments}
+\cleardoublepage
+\fi
+\ifphdsubmitted
+\include{chapters/00_declaration_of_authorship}
+\cleardoublepage
+\fi
+
+% Titelseite hatte noch normale Tabellen. Von hier ab sollen alle
+% Tabellen laut style-Vorgaben sans serif sein.
+\AtBeginEnvironment{tabular}{\sffamily}
+\AtBeginEnvironment{tabularx}{\sffamily}
+
+%% Inhaltsverzeichnis %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\setcounter{tocdepth}{2}
+\tableofcontents %Inhaltsverzeichnis
+\cleardoublepage %Das erste Kapitel soll auf einer ungeraden Seite beginnen.
+} % end ifnotdraft
+
+\pagestyle{fancy} %%Ab hier die Kopf-/Fusszeilen: headings / fancy / ...
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% einzelne Kapitel
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%\include{commands}
+
+\mainmatter
+\include{chapters/01_introduction}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%% LITERATUR UND ANDERE VERZEICHNISSE
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%% Ein kleiner Abstand zu den Kapiteln im Inhaltsverzeichnis (toc)
+\ifnotdraft{
+\addtocontents{toc}{\protect\vspace*{\baselineskip}}
+\cleardoublepage
+%% Literaturverzeichnis
+\phantomsection % phantomsection wird benötigt, damit z.B. hyperref die richtige Seite verlinkt.
+\addcontentsline{toc}{chapter}{Bibliography}
+\begin{footnotesize}
+%\nocite{*} %Auch nicht-zitierte BibTeX-Einträge werden angezeigt.
+\bibliography{literature/literature}%Eine Datei 'literature.bib' wird hierfür benötigt.
+\bibliographystyle{styles/comsys-alpha}%Art der Ausgabe: plain / apalike / amsalpha / ...
+\end{footnotesize}
+}
+
+%% Abbildungsverzeichnis
+%\clearpage
+%\addcontentsline{toc}{chapter}{List of Figures}
+%\listoffigures
+
+%% Tabellenverzeichnis
+%\clearpage
+%\addcontentsline{toc}{chapter}{List of Tables}
+%\listoftables
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%% ANHÄNGE
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\appendix
+\include{chapters/99_appendix}
+
+\end{document}

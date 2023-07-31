@@ -1,0 +1,159 @@
+% !TEX root = ../thesis.tex
+
+\newcommand{\thesistitleA}{% Note the %-symbol at end of the line of each command
+Your Awesome Thesis Title%
+}
+\newcommand{\thesistitleB}{%
+(Which May Also Be Quite Long%
+}
+\newcommand{\thesistitleC}{%
+And Stretch Several Lines) Here%
+}
+\newcommand{\firstname}{%
+Your Firstname(s)%
+}
+\newcommand{\lastname}{%
+Your Lastname(s)%
+}
+\newcommand{\studentid}{%
+XXX XXX % This is optional, remove text if you do not want to specific your student id
+}
+\newcommand{\currentdegree}{%
+Master of Science % only for PhD thesis, typically your current degree is Master of Science if you're writing your PhD thesis
+}
+\newcommand{\aimeddegreeGermanPossesive}{% only for PhD thesis. Degree you are about to get in German, possesive case, including indefinite article
+% reasonable options: eines Doktors der Naturwissenschaften, einer Doktorin der Naturwissenschaften, eines Doktors der Ingenieurwissenschaften, einer Doktorin der Ingenieurwissenschaften
+eines Doktors der Naturwissenschaften%
+}
+\newcommand{\placeofbirth}{%
+Your Place of Birth % only for PhD thesis, include land if land!=Germany
+}
+\DTMsavedate{RegistrationDate}{2019-01-01} % only undergrad
+\DTMsavedate{SubmissionDate}{2019-08-30} % undergrad and phd
+\DTMsavedate{DefenseDate}{2019-08-30} % only phdapproved
+
+\newcommand{\advisers}{% only undergrad
+Dipl.-Inform. Erika Mustermann\\
+Max Mustermann, M.$\,$Sc.%
+}
+\newcommand{\examiners}{%
+Prof.~Dr.-Ing. Klaus Wehrle\\
+Prof.~Dr.~rer.nat. Albert Einstein%
+}
+
+
+
+% Usually, you do NOT have to change information below.
+
+\begin{titlepage}
+\pdfbookmark[0]{Title Page}{Title Page}
+
+% for PhD theses this needs to conform with the chair regulations (Promotions-Merkblatt komplett, Homepage Promotionsbuero Fakultät 1, RWTH Aachen)!
+
+\ifundergrad
+	\ifiop
+		\tikz[overlay,remember picture]\node[inner sep=0,anchor=north east] at ($(current page.north east)+(2cm,1.7cm)$) {%
+			\includegraphics[width=15cm,keepaspectratio]{logos/comsys-iop-rwth}%
+		};
+	\else
+		\tikz[overlay,remember picture]\node[inner sep=0,anchor=north east] at ($(current page.north east)+(2.5cm,2.5cm)$) {%
+			\includegraphics[height=3.2cm,keepaspectratio]{logos/rwth_comsys_bild_cmyk}%
+		};
+	\fi
+	\iffkie
+		\tikz[overlay,remember picture]\node[inner sep=0,anchor=north west] at ($(current page.north west)+(4cm,1.7cm)$) {%
+			\includegraphics[width=6cm,keepaspectratio]{logos/fkie_60mm_p334}%
+		};
+	\fi
+\fi
+
+\hbox{}
+\vfill % vertically center text on page
+
+\centering
+
+\ifundergrad
+	\def\titleformat{\huge\sffamily}
+\fi
+\ifphd
+	\def\titleformat{\LARGE}
+\fi
+
+{\titleformat\textbf{%
+\phantom{g}\thesistitleA\phantom{g}\\[.1em]
+\phantom{g}\thesistitleB\phantom{g}\\[.1em]
+\phantom{g}\thesistitleC\phantom{g}\\[.1em]
+}}
+
+\vskip 2cm
+
+\ifundergrad
+{\large\sffamily
+
+\ifbachelor Bachelor \fi\ifmaster Master \fi\ifdiploma Diploma \fi Thesis\\[5pt]
+\textbf{\firstname{} \lastname{}}
+\vskip 1cm
+
+The present work was submitted to the\\[5pt]
+\textbf{Chair of Communication and Distributed Systems\\[5pt]
+        RWTH Aachen University, Germany}
+\vskip 2cm
+
+Advisor(s):
+\vskip 2mm
+\advisers{}
+\vskip 5mm
+Examiners:
+\vskip 2mm
+\examiners{}
+\vskip 1cm
+
+\begin{tabular}{R{6cm}p{6cm}}
+Registration date:  & \DTMusedate{RegistrationDate} \\
+Submission date:    & \DTMusedate{SubmissionDate} \\
+\end{tabular}
+
+} %\large\sffamily
+\fi
+
+\ifphd
+\ifphdsubmitted
+Der Fakult\"at f\"ur Mathematik, Informatik und Naturwissenschaften\\der RWTH Aachen University vorgelegte Dissertation zur Erlangung\\des akademischen Grades \aimeddegreeGermanPossesive{}
+\fi
+\ifphdapproved
+Von der Fakult\"at f\"ur Mathematik, Informatik und Naturwissenschaften\\der RWTH Aachen University zur Erlangung des akademischen Grades\\\aimeddegreeGermanPossesive{} genehmigte Dissertation
+\fi
+
+\vspace{2cm}
+\ifphdsubmitted
+von
+\fi
+\ifphdapproved
+vorgelegt von
+\fi
+
+\vspace{2cm}
+\currentdegree{}\\
+\vspace{1em}
+{\large{\textbf{\firstname{} \lastname{}}}}\\
+\vspace{1em}
+aus \placeofbirth{}
+
+\ifphdsubmitted
+\vspace{7cm}
+\fi
+
+\ifphdapproved
+\vspace{2cm}
+Berichter:\\
+\vspace{1em}
+\examiners{}\\
+\vspace{2cm}
+Tag der m\"undlichen Pr\"ufung: {\DTMsetup{datesep=.}\DTMsetstyle{ddmmyyyy}\DTMusedate{DefenseDate}}
+\fi
+\fi
+
+\vfill % vertically center text on page
+
+\end{titlepage}
+

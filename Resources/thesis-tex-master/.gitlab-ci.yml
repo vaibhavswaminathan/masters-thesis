@@ -1,0 +1,43 @@
+build:
+  stage: build
+  image: laboratory.comsys.rwth-aachen.de:5050/base-images/texlive:ubuntu-20.04
+  variables: { TZ: Europe/Berlin }
+  artifacts:
+    expire_in: 1 week
+    paths: [build/*.pdf]
+  script:
+    - make
+
+
+test-debian-testing:
+  stage: test
+  rules: [{ if: $CI_PROJECT_NAMESPACE == "comsys-public/templates" }]
+  image: laboratory.comsys.rwth-aachen.de:5050/base-images/texlive:latest
+  dependencies: []
+  script:
+    - make
+
+test-debian-stable:
+  stage: test
+  rules: [{ if: $CI_PROJECT_NAMESPACE == "comsys-public/templates" }]
+  image: laboratory.comsys.rwth-aachen.de:5050/base-images/texlive:stable
+  dependencies: []
+  script:
+    - make
+
+test-ubuntu-22.04:
+  stage: test
+  rules: [{ if: $CI_PROJECT_NAMESPACE == "comsys-public/templates" }]
+  image: laboratory.comsys.rwth-aachen.de:5050/base-images/texlive:ubuntu-22.04
+  dependencies: []
+  script:
+    - make
+
+test-ubuntu-20.04:
+  stage: test
+  rules: [{ if: $CI_PROJECT_NAMESPACE == "comsys-public/templates" }]
+  image: laboratory.comsys.rwth-aachen.de:5050/base-images/texlive:ubuntu-20.04
+  dependencies: []
+  script:
+    - make
+

@@ -1,0 +1,79 @@
+
+\makeatletter
+\@ifpackagelater{acro}{2017/02/17}{\@ifpackagelater{acro}{2019/09/23}{}{
+	\let\IDeclareAcronym\DeclareAcronym
+	\renewcommand{\DeclareAcronym}[2]{%
+		\IDeclareAcronym{#1}{%
+		#2,foreign-plural={}
+		}
+	}
+}}{}
+\makeatother
+
+\newcommand\ifacrothree{%
+	\ifnum\numexpr\csname c_acro_version_major_number_tl\endcsname=3\relax
+}
+
+\ifacrothree
+	\acsetup{use-id-as-short}
+	\def\ProvideAcroEnding{\DeclareAcroEnding}
+\fi
+
+\ProvideAcroEnding{possessive}{'s}{'s}
+\ProvideAcroEnding{possessiveplural}{s'}{s'}
+
+\ifacrothree
+	\NewAcroCommand\acg{m}{%
+		\acropossessive
+		\UseAcroTemplate{first}{#1}%
+	}
+	\NewAcroCommand\acsg{m}{%
+		\acropossessive
+		\UseAcroTemplate{short}{#1}%
+	}
+	\NewAcroCommand\aclg{m}{%
+		\acropossessive
+		\UseAcroTemplate{long}{#1}%
+	}
+	\NewAcroCommand\acgp{m}{%
+		\acropossessiveplural
+		\UseAcroTemplate{first}{#1}%
+	}
+	\NewAcroCommand\acsgp{m}{%
+		\acropossessiveplural
+		\UseAcroTemplate{short}{#1}%
+	}
+	\NewAcroCommand\aclgp{m}{%
+		\acropossessiveplural
+		\UseAcroTemplate{long}{#1}%
+	}
+\else
+	% remove this part when acro-2 (texlive-2019) is no longer in use by any sane person
+	% e.g. ubuntu-20.04 has texlive-2019 and will receive updates until April 2025
+	\ExplSyntaxOn
+	\NewAcroCommand \acg {
+		\acro_possessive:
+		\acro_use:n {#1}
+	}
+	\NewAcroCommand \acsg {
+		\acro_possessive:
+		\acro_short:n {#1}
+	}
+	\NewAcroCommand \aclg {
+		\acro_possessive:
+		\acro_long:n {#1}
+	}
+	\NewAcroCommand \acgp {
+		\acro_possessiveplural:
+		\acro_use:n {#1}
+	}
+	\NewAcroCommand \acsgp {
+		\acro_possessiveplural:
+		\acro_short:n {#1}
+	}
+	\NewAcroCommand \aclgp {
+		\acro_possessiveplural:
+		\acro_long:n {#1}
+	}
+	\ExplSyntaxOff
+\fi

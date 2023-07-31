@@ -1,0 +1,145 @@
+% !TEX root = ../thesis.tex
+
+\ifbachelor
+\includepdf[pages={1},offset=75 -75,pagecommand={
+\begin{tikzpicture}[remember picture,overlay,shift={(current page.center)}]
+\coordinate (de_begin-de_generic) at (5.4,10.3);
+\coordinate (de_end-de_generic) at (6.4,10.3);
+\coordinate (de_begin-de_master) at (-5.35,9.8);
+\coordinate (de_end-de_master) at (-3.2,9.8);
+\coordinate (en_begin-en_generic) at (3.2,9.35);
+\coordinate (en_end-en_generic) at (3.9,9.35);
+\coordinate (en_begin-en_master) at (6.0,9.35);
+\coordinate (en_end-en_master) at (7.65,9.35);
+\node at (-5.5,12.1)
+       [text width=7cm,rounded corners,below right]
+{
+\mbox{\lastname{}, \firstname{}}
+};
+\node at (3.25,12.1)
+       [text width=5cm,rounded corners,below right]
+{
+\studentid{}
+};
+\draw[line width=1mm] (de_begin-de_generic) -- (de_end-de_generic);
+\draw[line width=1mm] (de_begin-de_master) -- (de_end-de_master);
+\draw[line width=0.5mm] (en_begin-en_generic) -- (en_end-en_generic);
+\draw[line width=0.5mm] (en_begin-en_master) -- (en_end-en_master);
+\node at (-5.5,8.95)
+       [text width=16.5cm,rounded corners,below right]
+{
+\begin{onehalfspacing}%
+\thesistitleA\phantom{g}\\[0.1em]
+\thesistitleB\phantom{g}\\[0.1em]
+\thesistitleC\phantom{g}\\[0.1em]
+\end{onehalfspacing}
+};
+\node at (-5.5,2.35)
+       [text width=7cm,rounded corners,below right]
+{
+Aachen, {\DTMsetup{datesep=.}\DTMsetstyle{ddmmyyyy}\DTMusedate{SubmissionDate}}
+};
+\node at (-5.5,-8.7)
+       [text width=7cm,rounded corners,below right]
+{
+Aachen, {\DTMsetup{datesep=.}\DTMsetstyle{ddmmyyyy}\DTMusedate{SubmissionDate}}
+};
+\end{tikzpicture}
+}]{Formular_Eidesstattliche_Versicherung_neu.pdf}
+\fi
+
+\ifmaster
+\includepdf[pages={1},offset=75 -75,pagecommand={
+\begin{tikzpicture}[remember picture,overlay,shift={(current page.center)}]
+\coordinate (de_begin-de_generic) at (5.4,10.3);
+\coordinate (de_end-de_generic) at (6.4,10.3);
+\coordinate (de_begin-de_bachelor) at (6.5,10.3);
+\coordinate (de_end-de_bachelor) at (9,10.3);
+\coordinate (en_begin-en_generic) at (3.2,9.35);
+\coordinate (en_end-en_generic) at (3.9,9.35);
+\coordinate (en_begin-en_bachelor) at (4.0,9.35);
+\coordinate (en_end-en_bachelor) at (5.9,9.35);
+\node at (-5.5,12.1)
+       [text width=7cm,rounded corners,below right]
+{
+\mbox{\lastname{}, \firstname{}}
+};
+\node at (3.25,12.1)
+       [text width=5cm,rounded corners,below right]
+{
+\studentid{}
+};
+\draw[line width=1mm] (de_begin-de_generic) -- (de_end-de_generic);
+\draw[line width=1mm] (de_begin-de_bachelor) -- (de_end-de_bachelor);
+\draw[line width=0.5mm] (en_begin-en_generic) -- (en_end-en_generic);
+\draw[line width=0.5mm] (en_begin-en_bachelor) -- (en_end-en_bachelor);
+\node at (-5.5,8.95)
+       [text width=16.5cm,rounded corners,below right]
+{
+\begin{onehalfspacing}%
+\thesistitleA\phantom{g}\\[0.1em]
+\thesistitleB\phantom{g}\\[0.1em]
+\thesistitleC\phantom{g}\\[0.1em]
+\end{onehalfspacing}
+};
+\node at (-5.5,2.35)
+       [text width=7cm,rounded corners,below right]
+{
+Aachen, {\DTMsetup{datesep=.}\DTMsetstyle{ddmmyyyy}\DTMusedate{SubmissionDate}}
+};
+\node at (-5.5,-8.7)
+       [text width=7cm,rounded corners,below right]
+{
+Aachen, {\DTMsetup{datesep=.}\DTMsetstyle{ddmmyyyy}\DTMusedate{SubmissionDate}}
+};
+\end{tikzpicture}
+}]{Formular_Eidesstattliche_Versicherung_neu.pdf}
+\fi
+
+\ifdiploma
+\includepdf[pages={1},offset=75 -75,pagecommand={
+\begin{tikzpicture}[remember picture,overlay,shift={(current page.center)}]
+\coordinate (de_begin-de_bachelor) at (6.5,10.3);
+\coordinate (de_end-de_bachelor) at (9,10.3);
+\coordinate (de_begin-de_master) at (-5.35,9.8);
+\coordinate (de_end-de_master) at (-3.2,9.8);
+\coordinate (en_begin-en_bachelor) at (4.0,9.35);
+\coordinate (en_end-en_bachelor) at (5.9,9.35);
+\coordinate (en_begin-en_master) at (6.0,9.35);
+\coordinate (en_end-en_master) at (7.65,9.35);
+\node at (-5.5,12.1)
+       [text width=7cm,rounded corners,below right]
+{
+\mbox{\lastname{},\firstname{}}
+};
+\node at (3.25,12.1)
+       [text width=5cm,rounded corners,below right]
+{
+\studentid{}
+};
+\draw[line width=1mm] (de_begin-de_bachelor) -- (de_end-de_bachelor);
+\draw[line width=1mm] (de_begin-de_master) -- (de_end-de_master);
+\draw[line width=0.5mm] (en_begin-en_bachelor) -- (en_end-en_bachelor);
+\draw[line width=0.5mm] (en_begin-en_master) -- (en_end-en_master);
+\node at (-5.5,8.95)
+       [text width=16.5cm,rounded corners,below right]
+{
+\begin{onehalfspacing}%
+\thesistitleA\phantom{g}\\[0.1em]
+\thesistitleB\phantom{g}\\[0.1em]
+\thesistitleC\phantom{g}\\[0.1em]
+\end{onehalfspacing}
+};
+\node at (-5.5,2.35)
+       [text width=7cm,rounded corners,below right]
+{
+Aachen, {\DTMsetup{datesep=.}\DTMsetstyle{ddmmyyyy}\DTMusedate{SubmissionDate}}
+};
+\node at (-5.5,-8.7)
+       [text width=7cm,rounded corners,below right]
+{
+Aachen, {\DTMsetup{datesep=.}\DTMsetstyle{ddmmyyyy}\DTMusedate{SubmissionDate}}
+};
+\end{tikzpicture}
+}]{Formular_Eidesstattliche_Versicherung_neu.pdf}
+\fi
