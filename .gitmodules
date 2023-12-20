@@ -1,3 +1,6 @@
 [submodule "Code/SimTSC"]
 	path = Code/SimTSC
 	url = https://github.com/daochenzha/SimTSC.git
+[submodule "Code/SimTSC/pydtw"]
+	path = Code/SimTSC/pydtw
+	url = https://github.com/daochenzha/pydtw.git
