@@ -3,7 +3,7 @@ import argparse
 
 import numpy as np
 
-from src.utils import read_dataset, read_multivariate_dataset
+from src.utils import read_dataset, read_multivariate_dataset, read_transformed_dataset
 
 dataset_dir = './datasets/EBC'
 multivariate_dir = './datasets/multivariate'
@@ -39,11 +39,13 @@ if __name__ == "__main__":
     if args.dataset in multivariate_datasets:
         X, y, train_idx, test_idx = read_multivariate_dataset(multivariate_dir, args.dataset, args.shot)
     else:
-        X, y, train_idx, test_idx = read_dataset(dataset_dir, args.dataset, args.shot)
+        # X, y, train_idx, test_idx, val_idx = read_dataset(dataset_dir, args.dataset, args.shot)
+        X, y, train_idx, test_idx, val_idx = read_transformed_dataset(dataset_dir, args.dataset, args.shot)
     data = {
                 'X': X,
                 'y': y,
                 'train_idx': train_idx,
-                'test_idx': test_idx
+                'test_idx': test_idx,
+                'val_idx': val_idx
             }
     np.save(os.path.join(output_dir, args.dataset), data)
