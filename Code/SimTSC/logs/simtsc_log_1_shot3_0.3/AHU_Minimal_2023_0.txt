@@ -1,0 +1,12 @@
+--> Epoch 0: train loss 5.1321; validation loss 17.3561; train accuracy: 0.3148; best accuracy: 0.3148; validation F1-score: 0.2984
+--> Epoch 1: train loss 5.0741; validation loss 17.4588; train accuracy: 0.3380; best accuracy: 0.3380; validation F1-score: 0.2731
+--> Epoch 2: train loss 5.0281; validation loss 17.4354; train accuracy: 0.3565; best accuracy: 0.3565; validation F1-score: 0.2895
+--> Epoch 3: train loss 5.0130; validation loss 17.2716; train accuracy: 0.3889; best accuracy: 0.3889; validation F1-score: 0.3856
+--> Epoch 4: train loss 5.0274; validation loss 17.2934; train accuracy: 0.4769; best accuracy: 0.4769; validation F1-score: 0.3982
+--> Epoch 5: train loss 5.0892; validation loss 17.1265; train accuracy: 0.4491; best accuracy: 0.4769; validation F1-score: 0.3805
+--> Epoch 6: train loss 5.0874; validation loss 16.9491; train accuracy: 0.3056; best accuracy: 0.4769; validation F1-score: 0.3527
+--> Epoch 7: train loss 4.9409; validation loss 16.9967; train accuracy: 0.3750; best accuracy: 0.4769; validation F1-score: 0.3818
+--> Epoch 8: train loss 5.0050; validation loss 16.8260; train accuracy: 0.3796; best accuracy: 0.4769; validation F1-score: 0.4159
+--> Epoch 9: train loss 5.0225; validation loss 16.8794; train accuracy: 0.4306; best accuracy: 0.4769; validation F1-score: 0.3970
+--> AHU_Minimal_2023 Test Accuracy: 0.4273
+0.42725173210161665
