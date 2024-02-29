@@ -108,11 +108,11 @@ def read_transformed_dataset(ucr_root_dir, dataset_name, shot):
     # for _tmp in tmp:
     #     train_idx.extend(_tmp[:shot])
 
-    # znorm
-    X[np.isnan(X)] = 0
-    std_ = X.std(axis=1, keepdims=True)
-    std_[std_ == 0] = 1.0
-    X = (X - X.mean(axis=1, keepdims=True)) / std_
+    # # znorm
+    # X[np.isnan(X)] = 0
+    # std_ = X.std(axis=1, keepdims=True)
+    # std_[std_ == 0] = 1.0
+    # X = (X - X.mean(axis=1, keepdims=True)) / std_
 
     # add a dimension to make it multivariate with one dimension 
     X = X.reshape((X.shape[0], 1, X.shape[1]))

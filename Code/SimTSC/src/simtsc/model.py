@@ -22,11 +22,11 @@ class SimTSCTrainer:
         self.logger = logger
         self.tmp_dir = 'tmp'
         self.test_flag = False
-        self.wandb_logging = False
+        self.wandb_logging = True
         if not os.path.exists(self.tmp_dir):
             os.makedirs(self.tmp_dir)
 
-    def fit(self, model, X, y, train_idx, val_idx, distances, K, alpha, test_idx=None, report_test=False, batch_size=128, epochs=100):
+    def fit(self, model, X, y, train_idx, val_idx, distances, K, alpha, test_idx=None, report_test=False, batch_size=128, epochs=200):
         if self.wandb_logging:
             # Login to W<&B
             wandb.login()
@@ -54,15 +54,17 @@ class SimTSCTrainer:
         self.adj = torch.from_numpy(distances.astype(np.float32))
 
         self.X, self.y = torch.from_numpy(X), torch.from_numpy(y)
-        file_path = os.path.join(self.tmp_dir, str(uuid.uuid4()))
+        # file_path = os.path.join(self.tmp_dir, str(uuid.uuid4()))
+        file_path = os.path.join(self.tmp_dir, "SimTSC_rules_winter")
 
         optimizer = optim.Adam(model.parameters(), lr=1e-4, weight_decay=4e-3)
 
         best_acc = 0.0
+        early_stopper = EarlyStopper(patience=10)
 
         if self.wandb_logging:
             # Initialize W&B run
-            run_name = "Minimal2023-SimTSC-300epochs_negsample_off_K10"
+            run_name = "AHU_surveyext_Nov22Feb24-SimTSC-unnormalized"
             run = wandb.init(
                 # Set the project where this run will be logged
                 project="BES Time-Series Classification",
@@ -121,11 +123,16 @@ class SimTSCTrainer:
                 self.logger.log('--> Epoch {}: train loss {:5.4f}; validation loss {:5.4f}; train accuracy: {:5.4f}; best accuracy: {:5.4f}; validation F1-score: {:5.4f}'.format(epoch, train_loss, val_loss, acc, best_acc, f1_val))
             if self.wandb_logging:
                 wandb.log({"train accuracy": acc, "best accuracy": best_acc, "train loss": train_loss, "validation loss": val_loss, "validation F1-score": f1_val})
+            
+            # early stopping
+            if epoch > 10:    
+                if early_stopper.early_stop(val_loss):             
+                    break
         
         # Load the best model
         model.load_state_dict(torch.load(file_path))
         model.eval()
-        os.remove(file_path)
+        # os.remove(file_path)
 
         return model
     
@@ -178,7 +185,7 @@ def compute_accuracy(model, X, y, adj, K, alpha, loader, device, other_idx, othe
         f1 = f1_score(_y_total, preds_total, average='micro')
         print('--> F1-score {:5.4f}'.format(f1))
         # classification report
-        target_names = ['Fan', 'Flap', 'Temperature', 'Valve']
+        target_names = ['Operating','Speed','Temperature', 'Valve']
         # target_names = ['EHA', 'HR', 'ODA']
         # target_names = ['Flap / Valve', 'Humidity', 'Speed', 'Temperature', 'Vdp', 'Volume']
         # target_names = ['Control Mode', 'Error', 'Flap / Valve', 'Power' 'Pressure', 'Pump Operating', 'Speed', 'Temperature', 'Volume']
@@ -214,7 +221,8 @@ def compute_test_metrics(model, X, y, adj, K, alpha, loader, device):
     f1 = f1_score(_y_total, preds_total, average='micro')
     print('--> F1-score {:5.4f}'.format(f1))
     # classification report
-    target_names = ['Fan', 'Flap', 'Temperature', 'Valve']
+    target_names = ['Operating','Speed','Temperature', 'Valve']
+    # target_names = ['Fan', 'Flap', 'Temperature', 'Valve']
     # target_names = ['EHA', 'HR', 'ODA']
     # target_names = ['Flap / Valve', 'Humidity', 'Speed', 'Temperature', 'Vdp', 'Volume']
     # target_names = ['Control Mode', 'Error', 'Flap / Valve', 'Power' 'Pressure', 'Pump Operating', 'Speed', 'Temperature', 'Volume']
@@ -223,6 +231,24 @@ def compute_test_metrics(model, X, y, adj, K, alpha, loader, device):
     print('--> Classification Report: \n', classification_report(_y_total, preds_total, target_names=target_names))
     acc = correct / total
     return acc, clf_report, preds_names
+
+class EarlyStopper:
+    def __init__(self, patience=1, min_delta=0.0):
+        self.patience = patience
+        self.min_delta = min_delta
+        self.counter = 0
+        self.min_validation_loss = float('inf')
+
+    def early_stop(self, validation_loss):
+        if validation_loss < self.min_validation_loss:
+            self.min_validation_loss = validation_loss
+            self.counter = 0
+        elif validation_loss > (self.min_validation_loss + self.min_delta):
+            self.counter += 1
+            print("early stopping counter at: ", self.counter)
+            if self.counter >= self.patience:
+                return True
+        return False
 
 class SimTSC(nn.Module):
     def __init__(self, input_size, nb_classes, num_layers=1, n_feature_maps=64, dropout=0.5):

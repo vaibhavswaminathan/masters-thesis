@@ -8,60 +8,92 @@ import torch.optim as optim
 import torch.utils.data
 
 import wandb
+import pandas as pd
+
+from sklearn.metrics import f1_score, classification_report, confusion_matrix
 
 class ResNetTrainer:
     def __init__(self, device, logger):
         self.device = device
         self.logger = logger
         self.tmp_dir = 'tmp'
+        self.test_flag = False
+        self.wandb_logging = True
         if not os.path.exists(self.tmp_dir):
             os.makedirs(self.tmp_dir)
 
-    def fit(self, model, X_train, y_train, epochs=50, batch_size=128, eval_batch_size=128):
-        # Login to W<&B
-        wandb.login()
+    def fit(self, model, X_train, y_train, X_val, y_val, epochs=200, batch_size=128, eval_batch_size=128):
+        if self.wandb_logging:
+            # Login to W<&B
+            wandb.login()
         
         file_path = os.path.join(self.tmp_dir, str(uuid.uuid4()))
 
         train_dataset = Dataset(X_train, y_train)
         train_loader = torch.utils.data.DataLoader(train_dataset, batch_size=batch_size, shuffle=True, num_workers=1)
+        val_dataset = Dataset(X_val, y_val)
+        val_loader = torch.utils.data.DataLoader(val_dataset, batch_size=batch_size, shuffle=True, num_workers=1)
         optimizer = optim.Adam(model.parameters(), lr=1e-4, weight_decay=4e-3)
 
         best_acc = 0.0
+        early_stopper = EarlyStopper(patience=10)
 
-        # Initialize W&B run
-        run_name = "ResNet-50epochs"
-        run = wandb.init(
-            # Set the project where this run will be logged
-            project="BES Time-Series Classification",
-            entity="vaibhavs",
-            name=run_name,
-            # Track hyperparameters and run metadata
-            config={
-                "epochs": epochs
-            },
-        )
+        if self.wandb_logging:
+            # Initialize W&B run
+            run_name = "AHU_surveyext_Nov22Feb24_5day-ResNet-standardscaler"
+            run = wandb.init(
+                # Set the project where this run will be logged
+                project="BES Time-Series Classification",
+                entity="vaibhavs",
+                name=run_name,
+                # Track hyperparameters and run metadata
+                config={
+                    "epochs": epochs
+                },
+            )
 
         # Training
         for epoch in range(epochs):
             model.train()
+            train_loss = 0.0
             for i, inputs in enumerate(train_loader, 0):
                 X, y = inputs
                 X, y = X.to(self.device), y.to(self.device)
                 optimizer.zero_grad()
                 outputs = model(X)
                 loss = F.nll_loss(outputs, y)
+                train_loss += loss.item()
                 loss.backward()
                 optimizer.step()
 
             model.eval()
-            acc = compute_accuracy(model, train_loader, self.device)
+            acc = compute_accuracy(model, train_loader, self.device, self.test_flag)
             if acc >= best_acc:
                 best_acc = acc
                 torch.save(model.state_dict(), file_path)
-            self.logger.log('--> Epoch {}: loss {:5.4f}; accuracy: {:5.4f}; best accuracy: {:5.4f}'.format(epoch, loss.item(), acc, best_acc))
-            wandb.log({"accuracy": acc, "best accuracy": best_acc, "loss": loss})
-        
+            # validation loss
+            predicted_total = []
+            labels_total = []    
+            val_loss = 0.0
+            for i, inputs in enumerate(val_loader, 0):
+                X, y = inputs
+                X, y = X.to(self.device), y.to(self.device)
+                outputs = model(X)
+                _, predicted = torch.max(outputs.data, 1)
+                labels_total.extend(y)
+                predicted_total.extend(predicted)
+                f1_val = f1_score(labels_total, predicted_total, average='micro')
+                vloss = F.nll_loss(outputs, y)
+                val_loss += vloss.item()
+
+            self.logger.log('--> Epoch {}: train loss {:5.4f}; validation loss {:5.4f}; train accuracy: {:5.4f}; best accuracy: {:5.4f}; validation F1-score: {:5.4f}'.format(epoch, train_loss, val_loss, acc, best_acc, f1_val))
+            if self.wandb_logging:
+                wandb.log({"train accuracy": acc, "best accuracy": best_acc, "train loss": train_loss, "validation loss": val_loss, "validation F1-score": f1_val})
+            # early stopping
+            if epoch > 10:    
+                if early_stopper.early_stop(val_loss):             
+                    break
+                
         # Load the best model
         model.load_state_dict(torch.load(file_path))
         model.eval()
@@ -72,22 +104,62 @@ class ResNetTrainer:
     def test(self, model, X_test, y_test, batch_size=128):
         test_dataset = Dataset(X_test, y_test)
         test_loader = torch.utils.data.DataLoader(test_dataset, batch_size=batch_size, shuffle=False, num_workers=1)
-        acc = compute_accuracy(model, test_loader, self.device)
-        return acc
+        acc, clf_report, conf_mat = compute_accuracy(model, test_loader, self.device, True)
+        self.test_flag = False
+        return acc, clf_report, conf_mat
 
-def compute_accuracy(model, loader, device):
+def compute_accuracy(model, loader, device, test_flag):
     correct = 0
     total = 0
+    clf_report = None
+    predicted_total = []
+    labels_total = []
     with torch.no_grad():
         for data in loader:
             X, labels = data
             X, labels = X.to(device), labels.to(device)
             outputs = model(X)
             _, predicted = torch.max(outputs.data, 1)
+            labels_total.extend(labels)
+            predicted_total.extend(predicted)
             total += labels.size(0)
             correct += (predicted == labels).sum().item()
+    if test_flag:
+        # calculate F1-score
+        f1 = f1_score(labels_total, predicted_total, average='micro')
+        print('--> Test F1-score {:5.4f}'.format(f1))
+        # classification report
+        target_names = ['Operating','Speed','Temperature', 'Valve']
+        # target_names = ['Flap / Valve', 'Humidity', 'Speed', 'Temperature', 'Vdp', 'Volume']
+        clf_report = classification_report(labels_total, predicted_total, target_names=target_names, output_dict=True)
+        print('--> Classification Report: \n', classification_report(labels_total, predicted_total, target_names=target_names))
+        conf_mat = confusion_matrix(labels_total, predicted_total)
+        conf_df = pd.DataFrame(conf_mat, index=target_names, columns=target_names)
+        print('--> Confusion Matrix: \n', conf_df)
+
     acc = correct / total
-    return acc
+    if test_flag:
+        return acc, clf_report, conf_df
+    else:
+        return acc
+    
+class EarlyStopper:
+    def __init__(self, patience=1, min_delta=0.0):
+        self.patience = patience
+        self.min_delta = min_delta
+        self.counter = 0
+        self.min_validation_loss = float('inf')
+
+    def early_stop(self, validation_loss):
+        if validation_loss < self.min_validation_loss:
+            self.min_validation_loss = validation_loss
+            self.counter = 0
+        elif validation_loss > (self.min_validation_loss + self.min_delta):
+            self.counter += 1
+            print("early stopping counter at: ", self.counter)
+            if self.counter >= self.patience:
+                return True
+        return False
 
 class ResNet(nn.Module):
 

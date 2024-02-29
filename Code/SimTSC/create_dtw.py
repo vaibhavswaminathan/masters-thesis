@@ -25,7 +25,6 @@ def get_dtw(X):
             data = X[i]
             query = X[j]
             r = min(len(data)-1, len(query)-1, 100)
-            print("r: ", r)
             distances[i][j] = dtw.query(data, query, r=min(len(data)-1, len(query)-1, 100))['value']
     return distances
 

@@ -64,8 +64,8 @@ class DataGetter:
             data = self.datapoints
         params = {'project_id': self.project_id,
                   'dataPointID': 'dummy',
-                  'start': '2023-01-01 00:00:00',
-                  'end': '2023-12-31 00:00:00',
+                  'start': '2022-11-01 00:00:00',
+                  'end': '2024-02-26 00:00:00',
                   'samplerate': '15m'}
         for i in data:
             params['dataPointID'] = i
@@ -167,11 +167,40 @@ if __name__ == '__main__':
                           'ADS.fAHUCOTempOutADSInternalValuesMirror',
                           'ADS.fAHUHRBypValveAct1ADSInternalValuesMirror',
                           'ADS.fAHUHRBypValveSetADSInternalValuesMirror']
+    
+    datapoints_rules = ['ADS.fAHUTempEHAADSInternalValuesMirror',
+                        'ADS.fAHUTempETAADSInternalValuesMirror',
+                        'ADS.fAHUTempODAADSInternalValuesMirror',
+                        'ADS.fAHUTempSUPADSInternalValuesMirror',
+                        'ADS.fAHUPHValveActADSInternalValuesMirror',
+                        'ADS.fAHUCOValveActADSInternalValuesMirror']
+    
+    datapoints_ahu_survey_og = ['ADS.fAHUFanSUPSpeedActADSInternalValuesMirror',
+                                'ADS.fAHUTempEHAADSInternalValuesMirror',
+                                'ADS.fAHUTempETAADSInternalValuesMirror',
+                                'ADS.fAHUTempODAADSInternalValuesMirror',
+                                'ADS.fAHUTempSUPADSInternalValuesMirror',
+                                'ADS.fAHUPHValveActADSInternalValuesMirror',
+                                'ADS.fAHURHValveActADSInternalValuesMirror',
+                                'ADS.bAHUPHPumpOperatingADSInternalValuesMirror']
+    
+    datapoints_ahu_survey_ext = ['ADS.fAHUFanSUPSpeedActADSInternalValuesMirror',
+                                'ADS.fAHUFanETASpeedActADSInternalValuesMirror',
+                                'ADS.fAHUFanSUPSpeedSetADSInternalValuesMirror',
+                                'ADS.fAHUTempETAADSInternalValuesMirror',
+                                'ADS.fAHUTempODAADSInternalValuesMirror',
+                                'ADS.fAHUTempSUPADSInternalValuesMirror',
+                                'ADS.fAHUPHValveActADSInternalValuesMirror',
+                                'ADS.fAHURHValveActADSInternalValuesMirror',
+                                'ADS.fAHUCOValveActADSInternalValuesMirror',
+                                'ADS.bAHUPHPumpOperatingADSInternalValuesMirror',
+                                'ADS.bAHURHPumpOperatingADSInternalValuesMirror',
+                                'ADS.bAHUCOPumpOperatingADSInternalValuesMirror']
                             
     
     datapoints_cross_corr = ['ADS.fAHUCOValveActADSInternalValuesMirror','ADS.fAHUCOValveSetADSInternalValuesMirror']
     datapoints_trial2_mirror = ['ADS.fAHUFlapEHAActADSInternalValuesMirror', 'ADS.fAHUFlapEHASetADSInternalValuesMirror','ADS.fAHUFlapETAActADSInternalValuesMirror','ADS.fAHUFlapETASetADSInternalValuesMirror','ADS.fAHUFanETASpeedActADSInternalValuesMirror','ADS.fAHUFanETASpeedSetADSInternalValuesMirror','ADS.fAHUFanETAVdpActADSInternalValuesMirror','ADS.fAHUFanETAVolFlowActADSInternalValuesMirror','ADS.fAHUFanSUPVolFlowActADSInternalValuesMirror','ADS.fAHUTempEHAADSInternalValuesMirror','ADS.fAHUTempETAADSInternalValuesMirror','ADS.fAHUHumEHAADSInternalValuesMirror','ADS.fAHUHumETAADSInternalValuesMirror']
     
-    vals = dat.get_gps_timeseries(data=datapoints_minimal)
+    vals = dat.get_gps_timeseries(data=datapoints_ahu_survey_ext)
     extra = ['ADS.AHUPHTempRetPrimADS','ADS.fAHUPHTempSupADS','ADS.fAHUPHTempRetADS','ADS.fAHUHRTempOutEstimatedADS','ADS.fAHUCOTempSupPrimADS','ADS.fAHUCOTempRetPrimADS','ADS.fAHUCOTempSupADS','ADS.fAHUCOTempRetADS','ADS.fAHURHTempSupPrimADS','ADS.fAHURHTempRetPrimADS','ADS.fAHURHTempSupADS','ADS.fAHURHTempRetADS']
-    vals.to_csv('data_Minimal_15m_Jan23_Dec23.csv')
+    vals.to_csv('data_survey_ext_15m_Nov22_Feb24.csv')

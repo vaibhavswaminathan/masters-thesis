@@ -26,7 +26,7 @@ def train(X, y, train_idx, test_idx, val_idx, distances, device, logger, K, alph
     trainer = SimTSCTrainer(device, logger)
 
     model = trainer.fit(model, X, y, train_idx, val_idx, distances, K, alpha)
-    acc, clf_report, preds_names = trainer.test(model, test_idx)
+    acc, clf_report, labellist = trainer.test(model, test_idx)
 
     return acc, clf_report
 
@@ -39,9 +39,9 @@ def test(modelpath, X, y, test_idx, distances, device, logger, K, alpha):
     model = model.to(device)
     trainer = SimTSCTrainer(device, logger)
     model.eval()
-    acc, clf_report, preds_names = trainer.predict(model, X, y, test_idx, distances, K, alpha)
-    # acc, clf_report, preds_names = trainer.test(model, X, y, test_idx)
-    return acc, clf_report, preds_names
+    acc, clf_report, labellist = trainer.predict(model, X, y, test_idx, distances, K, alpha)
+    # acc, clf_report, labellist = trainer.test(model, X, y, test_idx)
+    return acc, clf_report, labellist
 
 
 def argsparser():
@@ -85,8 +85,8 @@ if __name__ == "__main__":
     out_dir = os.path.join(log_dir, 'simtsc_log_'+str(args.shot)+'_shot'+str(args.K)+'_'+str(args.alpha))
     if not os.path.exists(out_dir):
         os.makedirs(out_dir)
-    out_path = os.path.join(out_dir, args.dataset+'_'+str(args.seed)+'_debug'+'.txt')
-    report_path = os.path.join(out_dir, args.dataset+'_SimTSC_'+'clf_report.csv')
+    out_path = os.path.join(out_dir, args.dataset+'_'+str(args.seed)+'5day_surveyext_Nov22Feb24'+'.txt')
+    report_path = os.path.join(out_dir, args.dataset+'5day_surveyext_Nov22Feb24_SimTSC_'+'clf_report.csv')
 
     # Read data
     if args.dataset in multivariate_datasets:
@@ -103,15 +103,15 @@ if __name__ == "__main__":
         preds_out_path = os.path.join(test_out_dir, args.dataset+'_'+str(args.seed)+'_preds')
         with open(test_out_path, 'w') as f:
             logger = Logger(f)
-            model_dir = os.path.join(tmp_dir, str('00c2a981-804a-44da-80b1-44a700231e42'))
-            test_acc, clf_report, preds_names = test(model_dir, X, y, test_idx, distances, device, logger, args.K, args.alpha)
+            model_dir = os.path.join(tmp_dir, str('SimTSC_rules_winter'))
+            test_acc, clf_report, labellist = test(model_dir, X, y, test_idx, distances, device, logger, args.K, args.alpha)
             # Log results
             clf_report = pd.DataFrame(clf_report).transpose()
             clf_report.to_csv(test_report_path)
             logger.log('--> {} Test Accuracy: {:5.4f}'.format(args.dataset, test_acc))
-            logger.log('--> Label predictions: \n{}'.format(preds_names))
+            logger.log('--> Label predictions: \n{}'.format(labellist))
             with open(preds_out_path, 'wb') as fp:
-                pickle.dump(preds_names, fp)
+                pickle.dump(labellist, fp)
     
     else:
         with open(out_path, 'w') as f:

@@ -1,0 +1,151 @@
+@prefix bldg: <http://example.com/mybuilding#> .
+@prefix brick: <https://brickschema.org/schema/Brick#> .
+@prefix rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#> .
+@prefix rdfs: <http://www.w3.org/2000/01/rdf-schema#> .
+@prefix owl: <http://www.w3.org/2002/07/owl#> .
+@prefix unit: <http://qudt.org/vocab/unit/> .
+@prefix bsh: <https://brickschema.org/schema/BrickShape#> .
+@prefix skos: <http://www.w3.org/2004/02/skos/core#> .
+@prefix tag: <https://brickschema.org/schema/BrickTag#> .
+@prefix xsd: <http://www.w3.org/2001/XMLSchema#> .
+
+
+bldg:Testhall_AHU a brick:AHU .
+
+bldg:EHA a brick:System ;
+    brick:partOf bldg:Testhall_AHU .
+bldg:ODA a brick:System ;
+    brick:partOf bldg:Testhall_AHU .
+bldg:ETA a brick:System ;
+    brick:partOf bldg:Testhall_AHU .
+bldg:SUP a brick:System ;
+    brick:partOf bldg:Testhall_AHU .
+
+bldg:TempEHA a brick:Exhaust_Air_Temperature_Sensor ;
+    brick:isPointOf bldg:EHA ;
+    brick:hasUnit unit:DEG_C .
+
+bldg:TempSUP a brick:Supply_Air_Temperature_Sensor ;
+    brick:hasUnit unit:DEG_C ;
+    brick:isPointOf bldg:SUP .
+
+bldg:TempODA a brick:Outside_Air_Temperature_Sensor ;
+    brick:hasUnit unit:DEG_C ;
+    brick:isPointOf bldg:ODA .
+
+bldg:TempETA a brick:Return_Air_Temperature_Sensor ;
+    brick:hasUnit unit:DEG_C ;
+    brick:isPointOf bldg:ETA .
+
+bldg:FanETA a brick:Fan ;
+    bsh:hasQuantity bldg:Fan_Speed ;
+    bsh:hasQuantity brick:Fan_Speed_Command ; # setpoint of Fan
+    brick:isPointOf bldg:ETA .
+
+bldg:FanSUP a brick:Fan ;
+    bsh:hasQuantity bldg:Fan_Speed ;
+    bsh:hasQuantity brick:Fan_Speed_Command ; # setpoint of Fan
+    brick:isPointOf bldg:SUP .
+
+bldg:TempSUP brick:hasPoint brick:Supply_Air_Temperature_Setpoint ;
+    rdfs:range [bldg:hasMax bldg:max_SUP_Temp ; bldg:hasMin bldg:min_SUP_Temp] .
+
+bldg:SUP brick:hasPart bldg:Preheater .
+bldg:Preheater a brick:Heater ;
+    brick:hasPoint  bldg:PH_Valve_Act.
+bldg:PH_Valve_Act a brick:Valve_Position_Sensor ;
+    brick:hasUnit unit:PERCENT ;
+    rdfs:range [bldg:hasMin "0.0"^^xsd:double ; bldg:hasMax "100.0"^^xsd:double] .
+
+bldg:SUP brick:hasPart bldg:Cooler .
+
+# Rule 1
+bldg:max_SUP_Temp a bldg:Max_Air_Temperature_Limit ;
+        brick:value "40.0"^^xsd:double ;    
+        brick:hasUnit unit:DEG_C .
+bldg:min_SUP_Temp a bldg:Min_Air_Temperature_Limit ;
+        brick:value "15.0"^^xsd:double ;
+        brick:hasUnit unit:DEG_C .
+
+#
+# Extensions
+#
+
+bldg:Fan_Speed a brick:Measurable .
+
+bldg:hasMax a rdf:Property,
+        owl:DatatypeProperty,
+        owl:ObjectProperty ;
+    rdfs:label "Maximum value" ;
+    skos:definition "The maximum value/limit an entity property can assume"@en .
+
+bldg:hasMin a rdf:Property,
+        owl:DatatypeProperty,
+        owl:ObjectProperty ;
+    rdfs:label "Minimum value" ;
+    skos:definition "The minimum value/limit an entity property can assume"@en .
+
+bldg:Max_Air_Temperature_Limit a owl:Class ;
+    rdfs:label "Max Air Temperature Limit"@en ;
+    rdfs:subClassOf brick:Max_Limit ;
+    brick:hasAssociatedTag tag:Air,
+        tag:Limit,
+        tag:Max,
+        tag:Point,
+        tag:Temperature .
+
+bldg:Min_Air_Temperature_Limit a owl:Class ;
+    rdfs:label "Min Air Temperature Limit" ;
+    rdfs:subClassOf brick:Min_Limit ;
+    brick:hasAssociatedTag tag:Air,
+        tag:Limit,
+        tag:Min,
+        tag:Point,
+        tag:Temperature .
+
+bldg:implies a owl:AsymmetricProperty,
+        owl:ReflexiveProperty,
+        owl:TransitiveProperty ;
+    rdfs:label "Implies" ;
+    skos:definition "The subject implies the object in the context of some rule, property, or existence"@en .
+
+bldg:lessThan a owl:AsymmetricProperty,
+        owl:IrreflexiveProperty,
+        owl:TransitiveProperty ;
+    rdfs:label "Is less than" ;
+    owl:inverseOf bldg:greaterThan ;
+    skos:definition "subject is less than predicate; applicable for measurable quantities"@en .
+
+bldg:greaterThan a owl:AsymmetricProperty,
+        owl:IrreflexiveProperty,
+        owl:TransitiveProperty ;
+    rdfs:label "Is greater than" ;
+    skos:definition "subject is greater than predicate; applicable for measurable quantities"@en .
+
+bldg:Rule a rdfs:Class ;
+    rdfs:label "Rule" ;
+    rdfs:comment "The class of rules containing a RDF (subject, predicate, object) triple within a rule." ;
+    rdfs:subClassOf rdfs:Resource . 
+
+bldg:Statement a rdfs:Class ;
+    rdfs:label "Statement" ;
+    rdfs:comment "Statement used to describe building information" ;
+    rdfs:subClassOf rdfs:Resource .
+
+_:1 a bldg:Statement .
+_:1 rdf:subject bldg:TempODA ;
+    rdf:predicate bldg:lessThan ;
+    rdf:object [
+        brick:hasUnit unit:DEG_C ;
+        brick:value "3.0"^^xsd:double
+    ] .
+
+bldg:blank2 a bldg:Statement .
+bldg:blank2 rdf:subject bldg:PH_Valve_Act ;
+    rdf:predicate bldg:greaterThan ;
+    rdf:object [
+        brick:hasUnit unit:PERCENT ;
+        brick:value "0.0"^^xsd:double
+    ] .
+
+_:1 bldg:implies bldg:blank2 .
