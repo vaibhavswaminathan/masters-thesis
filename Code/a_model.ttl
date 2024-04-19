@@ -29,6 +29,9 @@ bldg:TempSUP a brick:Supply_Air_Temperature_Sensor ;
     brick:hasUnit unit:DEG_C ;
     brick:isPointOf bldg:SUP .
 
+bldg:TempSUP brick:hasPoint brick:Supply_Air_Temperature_Setpoint ;
+    rdfs:range [bldg:hasMax bldg:max_SUP_Temp ; bldg:hasMin bldg:min_SUP_Temp] .
+
 bldg:TempODA a brick:Outside_Air_Temperature_Sensor ;
     brick:hasUnit unit:DEG_C ;
     brick:isPointOf bldg:ODA .
@@ -40,17 +43,16 @@ bldg:TempETA a brick:Return_Air_Temperature_Sensor ;
 bldg:FanETA a brick:Fan ;
     bsh:hasQuantity bldg:Fan_Speed ;
     bsh:hasQuantity brick:Fan_Speed_Command ; # setpoint of Fan
-    brick:isPointOf bldg:ETA .
+    brick:isPartOf bldg:ETA .
 
 bldg:FanSUP a brick:Fan ;
     bsh:hasQuantity bldg:Fan_Speed ;
     bsh:hasQuantity brick:Fan_Speed_Command ; # setpoint of Fan
-    brick:isPointOf bldg:SUP .
+    brick:isPartOf bldg:SUP .
 
-bldg:TempSUP brick:hasPoint brick:Supply_Air_Temperature_Setpoint ;
-    rdfs:range [bldg:hasMax bldg:max_SUP_Temp ; bldg:hasMin bldg:min_SUP_Temp] .
+bldg:Fan_Speed brick:isPointOf bldg:SUP .
 
-bldg:SUP brick:hasPart bldg:Preheater .
+bldg:ODA brick:hasPart bldg:Preheater .
 bldg:Preheater a brick:Heater ;
     brick:hasPoint  bldg:PH_Valve_Act.
 bldg:PH_Valve_Act a brick:Valve_Position_Sensor ;
@@ -65,6 +67,14 @@ bldg:max_SUP_Temp a bldg:Max_Air_Temperature_Limit ;
         brick:hasUnit unit:DEG_C .
 bldg:min_SUP_Temp a bldg:Min_Air_Temperature_Limit ;
         brick:value "15.0"^^xsd:double ;
+        brick:hasUnit unit:DEG_C .
+
+# Rule 2
+bldg:max_ODA_Temp a bldg:Max_Air_Temperature_Limit ;
+        brick:value "20.0"^^xsd:double ;    
+        brick:hasUnit unit:DEG_C .
+bldg:min_ODA_Temp a bldg:Min_Air_Temperature_Limit ;
+        brick:value "-10.0"^^xsd:double ;
         brick:hasUnit unit:DEG_C .
 
 #
@@ -122,30 +132,34 @@ bldg:greaterThan a owl:AsymmetricProperty,
     rdfs:label "Is greater than" ;
     skos:definition "subject is greater than predicate; applicable for measurable quantities"@en .
 
-bldg:Rule a rdfs:Class ;
-    rdfs:label "Rule" ;
-    rdfs:comment "The class of rules containing a RDF (subject, predicate, object) triple within a rule." ;
-    rdfs:subClassOf rdfs:Resource . 
-
 bldg:Statement a rdfs:Class ;
     rdfs:label "Statement" ;
     rdfs:comment "Statement used to describe building information" ;
     rdfs:subClassOf rdfs:Resource .
 
-_:1 a bldg:Statement .
-_:1 rdf:subject bldg:TempODA ;
+bldg:Rule a rdfs:Class ;
+    rdfs:label "Rule" ;
+    rdfs:comment "The class of rules containing a RDF (subject, predicate, object) triple within a rule." ;
+    rdfs:subClassOf rdfs:Resource . 
+
+bldg:stmt1 a bldg:Statement .
+bldg:stmt1 rdf:subject bldg:TempODA ;
     rdf:predicate bldg:lessThan ;
-    rdf:object [
+    rdf:object bldg:tempCelsius .
+bldg:tempCelsius a brick:Measurable ;
         brick:hasUnit unit:DEG_C ;
-        brick:value "3.0"^^xsd:double
-    ] .
+        brick:value "3.0"^^xsd:double .
 
-bldg:blank2 a bldg:Statement .
-bldg:blank2 rdf:subject bldg:PH_Valve_Act ;
+bldg:stmt2 a bldg:Statement .
+bldg:stmt2 rdf:subject bldg:PH_Valve_Act ;
     rdf:predicate bldg:greaterThan ;
-    rdf:object [
-        brick:hasUnit unit:PERCENT ;
-        brick:value "0.0"^^xsd:double
-    ] .
+    rdf:object bldg:valvePercent .
+bldg:valvePercent a brick:Measurable ;
+    brick:hasUnit unit:PERCENT ;
+    brick:value "0.0"^^xsd:double .
 
-_:1 bldg:implies bldg:blank2 .
+# If TempODA < 3°C --> PH_Valve_Act > 0% (winter)
+bldg:rule_TempODA_PHValve a bldg:Rule  ;
+    rdf:subject bldg:stmt1 ;
+    rdf:predicate bldg:implies ;
+    rdf:object bldg:stmt2 .
